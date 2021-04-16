@@ -1,4 +1,4 @@
-package com.example.myplaces;
+package com.example.myplaces.Models;
 
 import java.util.ArrayList;
 
@@ -9,9 +9,6 @@ public class MyPlacesData {
     private MyPlacesData()
     {
         myPlaces= new ArrayList<MyPlace>();
-        myPlaces.add(new MyPlace("Place A"));
-        myPlaces.add(new MyPlace("Place B"));
-        myPlaces.add(new MyPlace("Place C"));
     }
 
     private static class SingletonHolder {

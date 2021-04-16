@@ -1,4 +1,4 @@
-package com.example.myplaces;
+package com.example.myplaces.Models;
 
 public class MyPlace {
     private String name;

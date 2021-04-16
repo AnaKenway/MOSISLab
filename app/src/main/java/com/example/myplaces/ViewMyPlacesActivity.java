@@ -1,5 +1,6 @@
 package com.example.myplaces;
 
+import com.example.myplaces.Models.*;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -55,7 +56,7 @@ public class ViewMyPlacesActivity extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_edit_my_place, menu);
+        getMenuInflater().inflate(R.menu.menu_view_my_place, menu);
         return true;
     }
 
@@ -65,9 +66,9 @@ public class ViewMyPlacesActivity extends AppCompatActivity {
 
         if(id==R.id.show_map_item){
             Toast.makeText(this, "Show Map!", Toast.LENGTH_SHORT).show();
-        } else if(id==R.id.new_place_item){
-            Intent i = new Intent(this, MyPlacesList.class);
-            startActivity(i);
+        } else if(id==R.id.my_places_list_item){
+            Intent i2 = new Intent(this, MyPlacesList.class);
+            startActivity(i2);
         } else if(id==R.id.about_item){
             Intent i=new Intent(this, About.class);
             startActivity(i);

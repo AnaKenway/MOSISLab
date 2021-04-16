@@ -1,5 +1,6 @@
 package com.example.myplaces;
 
+import com.example.myplaces.Models.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,10 +23,24 @@ import android.widget.Toast;
 
 public class EditMyPlaceActivity extends AppCompatActivity implements View.OnClickListener {
 
+    boolean editMode=true;
+    int position=-1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_my_place);
+        try{
+            Intent listIntent= getIntent();
+            Bundle positionBundle=listIntent.getExtras();
+            if(positionBundle!=null)
+                position =positionBundle.getInt("position");
+            else
+                editMode=false;
+        }
+        catch(Exception e){
+            editMode=false;
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -39,6 +54,18 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
         Button cancelButton = (Button) findViewById(R.id.editmyplace_cancel_button);
         cancelButton.setOnClickListener(this);
         EditText nameEditText = (EditText) findViewById(R.id.editmyplace_name_edit);
+        if(!editMode){
+           finishedButton.setEnabled(false);
+           finishedButton.setText("Add");
+        }
+        else if(position>=0){
+            finishedButton.setText("Save");
+            MyPlace place= MyPlacesData.getInstance().getPlace(position);
+            nameEditText.setText(place.getName());
+            EditText descEditText= (EditText) findViewById(R.id.editmyplace_desc_edit);
+            descEditText.setText(place.getDescription());
+        }
+
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -65,8 +92,15 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
                 String nme = etName.getText().toString();
                 EditText etDesc= (EditText) findViewById(R.id.editmyplace_desc_edit);
                 String desc = etDesc.getText().toString();
-                MyPlace place = new MyPlace(nme, desc);
-                MyPlacesData.getInstance().addNewPlace(place);
+                if(!editMode){
+                    MyPlace place=new MyPlace(nme,desc);
+                    MyPlacesData.getInstance().addNewPlace(place);
+                }
+                else{
+                    MyPlace place=MyPlacesData.getInstance().getPlace(position);
+                    place.setName(nme);
+                    place.setDescription(desc);
+                }
                 setResult(Activity.RESULT_OK);
                 finish();
                 break;

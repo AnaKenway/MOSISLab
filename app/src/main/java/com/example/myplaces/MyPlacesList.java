@@ -1,5 +1,6 @@
 package com.example.myplaces;
 
+import com.example.myplaces.Models.*;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 
 public class MyPlacesList extends AppCompatActivity {
 
+    static int NEW_PLACE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +39,8 @@ public class MyPlacesList extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i= new Intent(MyPlacesList.this,EditMyPlaceActivity.class);
+                startActivityForResult(i,NEW_PLACE);
             }
         });
 
@@ -55,6 +58,17 @@ public class MyPlacesList extends AppCompatActivity {
                 startActivity(intent);
 
 
+            }
+        });
+
+        myPlacesList.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View v, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
+                MyPlace place= MyPlacesData.getInstance().getPlace(info.position);
+                contextMenu.setHeaderTitle(place.getName());
+                contextMenu.add(0,1,1,"View place");
+                contextMenu.add(0,2,2,"Edit place");
             }
         });
     }
@@ -83,5 +97,24 @@ public class MyPlacesList extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        Bundle positionBundle = new Bundle();
+        positionBundle.putInt("position",info.position);
+        Intent i=null;
+        if(item.getItemId()==1){
+            i=new Intent(this,ViewMyPlacesActivity.class);
+            i.putExtras(positionBundle);
+            startActivity(i);
+        }
+        else if(item.getItemId()==2){
+            i=new Intent(this,EditMyPlaceActivity.class);
+            i.putExtras(positionBundle);
+            startActivityForResult(i,1);
+        }
+        return super.onContextItemSelected(item);
     }
 }
