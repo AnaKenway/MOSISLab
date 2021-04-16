@@ -14,6 +14,8 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
        if(id==R.id.show_map_item){
            Toast.makeText(this, "Show Map!", Toast.LENGTH_SHORT).show();
        } else if(id==R.id.new_place_item){
-           Intent i3 = new Intent(this, EditMyPlaceActivity.class);
-           startActivityForResult(i3, NEW_PLACE);
+           Toast.makeText(this, "Add Place!", Toast.LENGTH_SHORT).show();
        } else if(id==R.id.my_places_list_item){
            Intent i2=new Intent(this,MyPlacesList.class);
            startActivity(i2);
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode,int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode== Activity.RESULT_OK){
-            Toast.makeText(this, "New Place added!", Toast.LENGTH_SHORT).show();
+            ListView myPlacesList = (ListView) findViewById(R.id.my_places_list);
+            myPlacesList.setAdapter(new ArrayAdapter<MyPlace>(this, android.R.layout.simple_list_item_1, MyPlacesData.getInstance().getMyPlaces()));
         }
     }
 }

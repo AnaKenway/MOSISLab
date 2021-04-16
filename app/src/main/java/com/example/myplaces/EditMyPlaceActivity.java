@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +33,28 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
 
         Button finishedButton = (Button) findViewById(R.id.editmyplace_finished_button);
         finishedButton.setOnClickListener(this);
+        finishedButton.setEnabled(false);
+        finishedButton.setText("Add");
+
         Button cancelButton = (Button) findViewById(R.id.editmyplace_cancel_button);
         cancelButton.setOnClickListener(this);
+        EditText nameEditText = (EditText) findViewById(R.id.editmyplace_name_edit);
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                finishedButton.setEnabled(editable.length()>0);
+            }
+        });
     }
 
     @Override
