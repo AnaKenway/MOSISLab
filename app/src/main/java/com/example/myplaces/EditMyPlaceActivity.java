@@ -59,6 +59,7 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
            finishedButton.setText("Add");
         }
         else if(position>=0){
+            finishedButton.setEnabled(true);
             finishedButton.setText("Save");
             MyPlace place= MyPlacesData.getInstance().getPlace(position);
             nameEditText.setText(place.getName());

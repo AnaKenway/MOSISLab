@@ -61,15 +61,12 @@ public class MyPlacesList extends AppCompatActivity {
             }
         });
 
-        myPlacesList.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu contextMenu, View v, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
-                MyPlace place= MyPlacesData.getInstance().getPlace(info.position);
-                contextMenu.setHeaderTitle(place.getName());
-                contextMenu.add(0,1,1,"View place");
-                contextMenu.add(0,2,2,"Edit place");
-            }
+        myPlacesList.setOnCreateContextMenuListener((contextMenu, v, contextMenuInfo) -> {
+            AdapterView.AdapterContextMenuInfo info= (AdapterView.AdapterContextMenuInfo) contextMenuInfo;
+            MyPlace place= MyPlacesData.getInstance().getPlace(info.position);
+            contextMenu.setHeaderTitle(place.getName());
+            contextMenu.add(0,1,1,"View place");
+            contextMenu.add(0,2,2,"Edit place");
         });
     }
 
