@@ -25,7 +25,21 @@
         android:id="@+id/editmyplace_desc_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+<<<<<<< HEAD
 
+=======
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--<Button
+            android:id="@+id/editmyplace_finished_button"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/editmyplace_cancel_button"
+            android:layout_weight="1"
+            android:text = "@string/editmyplace_cancel_label"/>-->
+    </TableRow>
+>>>>>>> 8524137ab99a72f6e57aa2f652fd4eb7381a5d77
 
     <TableLayout
         android:layout_width="wrap_content"

@@ -33,8 +33,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
+=======
+>>>>>>> 8524137ab99a72f6e57aa2f652fd4eb7381a5d77
 
 public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
