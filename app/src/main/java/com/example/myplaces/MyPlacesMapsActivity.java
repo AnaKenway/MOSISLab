@@ -7,31 +7,66 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.ViewGroupOverlay;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.myplaces.Models.MyPlace;
+import com.example.myplaces.Models.MyPlacesData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     static int NEW_PLACE = 1;
+    public static final int SHOW_MAP = 0;
+    public static final int CENTER_PLACE_ON_MAP = 1;
+    public static final int SELECT_COORDINATES = 1;
+    private int state = 0;
+    private boolean selCoordsEnabled = false;
+    private LatLng placeLoc;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            Intent mapIntent = getIntent();
+            Bundle mapBundle = mapIntent.getExtras();
+            if(mapBundle!=null){
+                state = mapBundle.getInt("state");
+                if(state==CENTER_PLACE_ON_MAP){
+                    String placeLat = mapBundle.getString("lat");
+                    String placeLon = mapBundle.getString("lon");
+                    placeLoc= new LatLng(Double.parseDouble(placeLat), Double.parseDouble(placeLon));
+                }
+            }
+        }catch(Exception e){
+            Log.d("Error","Error reading state");
+        }
+
         setContentView(R.layout.activity_my_places_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -39,11 +74,18 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener((view) -> {
-            Intent i = new Intent(MyPlacesMapsActivity.this, EditMyPlaceActivity.class);
-            startActivityForResult(i, NEW_PLACE);
-        });
+        if(state != SELECT_COORDINATES){
 
+            fab.setOnClickListener((view) -> {
+                Intent i = new Intent(MyPlacesMapsActivity.this, EditMyPlaceActivity.class);
+                startActivityForResult(i, NEW_PLACE);
+            });
+        }
+        else {
+            ViewGroup layout = (ViewGroup) fab.getParent();
+            if(null!= layout)
+                layout.removeView(fab);
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -53,8 +95,16 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_my_places_maps,menu);
+        if(state == SELECT_COORDINATES && !selCoordsEnabled)
+        {
+            menu.add(0,1,1,"Select Coordinates");
+            menu.add(0,2,2,"Cancel");
+            return super.onCreateOptionsMenu(menu);
+        }
+        else {
+        getMenuInflater().inflate(R.menu.menu_my_places_maps, menu);
         return true;
+    }
     }
 
     @Override
@@ -62,21 +112,28 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
     {
         int id = item.getItemId();
 
-        if(id== R.id.new_place_item)
+        if(state == SELECT_COORDINATES && !selCoordsEnabled)
         {
-            Intent i = new Intent(this, EditMyPlaceActivity.class);
-            startActivityForResult(i, 1);
-        }
-        else if(id==R.id.about_item)
-        {
-            Intent i = new Intent(this, About.class);
-            startActivity(i);
-        }
-        else if(id==R.id.home)
-        {
-            finish();
-        }
+            if(id == 1){
+                selCoordsEnabled = true;
+                Toast.makeText(this, "Select Coordinates", Toast.LENGTH_SHORT).show();
+            }else if(id == 2)
+            {
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+            }
+        } else {
 
+            if (id == R.id.new_place_item) {
+                Intent i = new Intent(this, EditMyPlaceActivity.class);
+                startActivityForResult(i, 1);
+            } else if (id == R.id.about_item) {
+                Intent i = new Intent(this, About.class);
+                startActivity(i);
+            } else if (id == R.id.home) {
+                finish();
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -103,7 +160,68 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
         }
         else
         {
+            if(state == SHOW_MAP)
             mMap.setMyLocationEnabled(true);
+            else if(state == CENTER_PLACE_ON_MAP)
+            setOnMapClickListener();
+            else
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLoc, 15));
+            addMyPlaceMarkers();
+        }
+    }
+
+    private HashMap<Marker, Integer> markerPlaceIdMap;
+
+    private void addMyPlaceMarkers()
+    {
+        ArrayList<MyPlace> places = MyPlacesData.getInstance().getMyPlaces();
+        markerPlaceIdMap = new HashMap<Marker, Integer>((int) ((double) places.size()*1.2));
+        for (int i = 0 ; i<places.size();i++)
+        {
+            MyPlace place = places.get(i);
+            String lat = place.getLatitude();
+            String lon = place.getLongitude();
+            LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(loc);
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.outline_location_city_black_48dp));
+            markerOptions.title(place.getName());
+            Marker marker = mMap.addMarker(markerOptions);
+            markerPlaceIdMap.put(marker,i);
+        }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker)
+            {
+                Intent intent = new Intent(MyPlacesMapsActivity.this, ViewMyPlacesActivity.class);
+                int i = markerPlaceIdMap.get(marker);
+                intent.putExtra("position",i);
+                startActivity(intent);
+                return true;
+            }
+        });
+    }
+
+    private void setOnMapClickListener()
+    {
+        if(mMap!= null)
+        {
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
+                @Override
+                public void onMapClick(LatLng latLng)
+                {
+                    if(state == SELECT_COORDINATES && selCoordsEnabled) {
+                        String lon = Double.toString(latLng.longitude);
+                        String lat = Double.toString(latLng.latitude);
+                        Intent locationIntent = new Intent();
+                        locationIntent.putExtra("lon", lon);
+                        locationIntent.putExtra("lat", lat);
+                        setResult(Activity.RESULT_OK, locationIntent);
+                        finish();
+                    }
+                }
+            });
         }
     }
 
@@ -113,7 +231,14 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
         switch(requestCode){
             case PERMISSION_ACCESS_FINE_LOCATION:{
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+
+                    if(state == SHOW_MAP)
                     mMap.setMyLocationEnabled(true);
+                    else if(state == CENTER_PLACE_ON_MAP)
+                    setOnMapClickListener();
+                    else
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLoc,15));
+                    addMyPlaceMarkers();
                 }
                 return;
             }

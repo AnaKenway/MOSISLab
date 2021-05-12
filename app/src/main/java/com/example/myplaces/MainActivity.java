@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
        if(id==R.id.show_map_item){
            Intent i= new Intent(this, MyPlacesMapsActivity.class);
+           i.putExtra("state",MyPlacesMapsActivity.SHOW_MAP);
            startActivity(i);
        } else if(id==R.id.new_place_item){
            Toast.makeText(this, "Add Place!", Toast.LENGTH_SHORT).show();
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode== Activity.RESULT_OK){
             ListView myPlacesList = (ListView) findViewById(R.id.my_places_list);
+            if(myPlacesList!=null)
             myPlacesList.setAdapter(new ArrayAdapter<MyPlace>(this, android.R.layout.simple_list_item_1, MyPlacesData.getInstance().getMyPlaces()));
         }
     }
