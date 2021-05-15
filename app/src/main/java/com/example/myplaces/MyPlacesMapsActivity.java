@@ -2,7 +2,9 @@ package com.example.myplaces;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -33,11 +35,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-<<<<<<< HEAD
+
 import java.util.ArrayList;
 import java.util.HashMap;
-=======
->>>>>>> 8524137ab99a72f6e57aa2f652fd4eb7381a5d77
 
 public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -120,6 +120,7 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
             if(id == 1){
                 selCoordsEnabled = true;
                 Toast.makeText(this, "Select Coordinates", Toast.LENGTH_SHORT).show();
+                item.setEnabled(false);
             }else if(id == 2)
             {
                 setResult(Activity.RESULT_CANCELED);
