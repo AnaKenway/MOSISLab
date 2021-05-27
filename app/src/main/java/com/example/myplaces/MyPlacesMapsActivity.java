@@ -183,13 +183,13 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
         for (int i = 0 ; i<places.size();i++)
         {
             MyPlace place = places.get(i);
-            String lat = place.getLatitude();
-            String lon = place.getLongitude();
+            String lat = place.latitude;
+            String lon = place.longitude;
             LatLng loc = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(loc);
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.outline_location_city_black_48dp));
-            markerOptions.title(place.getName());
+            markerOptions.title(place.name);
             Marker marker = mMap.addMarker(markerOptions);
             markerPlaceIdMap.put(marker,i);
         }
