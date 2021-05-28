@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.myplaces.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -32,10 +34,19 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i= new Intent(MainActivity.this,EditMyPlaceActivity.class);
-                startActivityForResult(i,NEW_PLACE);
+                Intent i=new Intent(MainActivity.this, LoginActivity.class);
+                         startActivity(i);
             }
         });
+        //Button next=findViewById(R.id.button_finish);
+        //next.setOnClickListener(new View.OnClickListener(){
+
+        //    @Override
+        //    public void onClick(View v) {
+        //        Intent i=new Intent(MainActivity.this, LoginActivity.class);
+         //       startActivity(i);
+         //   }
+       // });
     }
 
     @Override

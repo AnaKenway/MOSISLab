@@ -39,7 +39,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapReadyCallback, MyPlacesData.ListUpdatedEventListener {
 
     private GoogleMap mMap;
     static int NEW_PLACE = 1;
@@ -94,6 +94,14 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        MyPlacesData.ListUpdatedEventListener updateListener = new MyPlacesData.ListUpdatedEventListener() {
+            @Override
+            public void onListUpdated() {
+                addMyPlaceMarkers();
+            }
+        };
+        MyPlacesData.getInstance().setEventListener(this);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -171,13 +179,7 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
             else
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLoc, 15));
             addMyPlaceMarkers();
-            MyPlacesData.ListUpdatedEventListener updateListener = new MyPlacesData.ListUpdatedEventListener() {
-                @Override
-                public void onListUpdated() {
-                    addMyPlaceMarkers();
-                }
-            };
-            MyPlacesData.getInstance().setEventListener(updateListener);
+
         }
     }
 
@@ -254,5 +256,10 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
                 return;
             }
         }
+    }
+
+    @Override
+    public void onListUpdated() {
+        this.addMyPlaceMarkers();
     }
 }

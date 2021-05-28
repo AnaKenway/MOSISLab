@@ -70,6 +70,14 @@ public class MyPlacesList extends AppCompatActivity {
             contextMenu.add(0,3,3,"Delete place");
             contextMenu.add(0,4,4,"Show on map");
         });
+
+        MyPlacesData.ListUpdatedEventListener updateListener = new MyPlacesData.ListUpdatedEventListener() {
+            @Override
+            public void onListUpdated() {
+                setList();
+            }
+        };
+        MyPlacesData.getInstance().setEventListener(updateListener);
     }
 
     @Override

@@ -51,9 +51,10 @@ public class MyPlacesData {
                 myPlace.key=myPlaceKey;
                 myPlaces.add(myPlace);
                 myPlacesKeyIndexMapping.put(myPlaceKey,myPlaces.size()-1);
-                if(updateListener!=null)
-                    updateListener.onListUpdated();
+
             }
+            if(updateListener!=null)
+                updateListener.onListUpdated();
         }
 
         @Override
@@ -79,9 +80,10 @@ public class MyPlacesData {
                 int index=myPlacesKeyIndexMapping.get(myPlaceKey);
                 myPlaces.remove(index);
                 recreateKeyIndexMapping();
-                if(updateListener!=null)
-                    updateListener.onListUpdated();
+
             }
+            if(updateListener!=null)
+                updateListener.onListUpdated();
         }
 
         @Override
