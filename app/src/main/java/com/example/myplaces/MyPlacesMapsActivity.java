@@ -171,6 +171,13 @@ public class MyPlacesMapsActivity extends AppCompatActivity implements OnMapRead
             else
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLoc, 15));
             addMyPlaceMarkers();
+            MyPlacesData.ListUpdatedEventListener updateListener = new MyPlacesData.ListUpdatedEventListener() {
+                @Override
+                public void onListUpdated() {
+                    addMyPlaceMarkers();
+                }
+            };
+            MyPlacesData.getInstance().setEventListener(updateListener);
         }
     }
 
